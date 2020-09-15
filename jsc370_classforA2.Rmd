@@ -24,6 +24,7 @@ library(survival)
 
 - Time is often called survival time since it's the time that an individual has survived over some follow-up period.
 
+---
 
 ## Survival Data
 
@@ -36,6 +37,7 @@ clinical <- read_delim("clinical.cart.2020-01-26/clinical.tsv",
 clinical %>% select(days_to_last_follow_up, days_to_death, vital_status) %>% head() %>% kable() %>% kable_styling()
 ```
 
+---
 
 ## Censored Data
 
@@ -48,6 +50,7 @@ clinical %>% select(days_to_last_follow_up, days_to_death, vital_status) %>% hea
    + lost to follow-up
    + withdraw from study
 
+---
 
 ## Survival Data
 
@@ -63,6 +66,7 @@ clinical %>% select(days_to_last_follow_up, days_to_death, vital_status) %>% hea
 
 How can observed survival time be defined?
 
+---
 
 ## Survival Data
 
@@ -76,6 +80,8 @@ clinical %>% select(days_to_last_follow_up, days_to_death, vital_status) %>% hea
 - If `vital_status = Alive` and `days_to_last_follow_up` is not missing then $T=$ `days_to_last_follow_up`.
 
 - If a person is still alive during the study period then they are censored; if the person died then the event occured.
+
+---
 
 ## Survival Data - Define Survival Time
 
@@ -91,6 +97,8 @@ clinical$os_days <- ifelse(clinical$vital_status == "Alive",
 ```{r, echo=FALSE}
 clinical %>% select(days_to_last_follow_up, days_to_death, vital_status, os_days) %>% head() %>% kable() %>% kable_styling()
 ```
+
+---
 
 ## Survival Data - Define Censoring
 
@@ -113,6 +121,7 @@ clinical$dead <- ifelse(clinical$vital_status == "Alive", 0,
 clinical %>% select(days_to_last_follow_up, days_to_death, vital_status, os_days, dead) %>% head() %>% kable() %>% kable_styling()
 ```
 
+---
 
 ## Survivor Function
 
@@ -133,6 +142,7 @@ df <- data.frame(s = c(1, 0.8, 0.75, 0.5, 0.45, 0.3, 0.28, 0.22), t = c(0, 0.8, 
 df %>% ggplot(aes(t,s)) + geom_step() + labs(title  = "Observed Survival Function") + ylab(label = "Observed S(t)") + xlab(label = "t") + stat_function(fun = function(.x) 1- pexp(.x, rate = .2), colour = "red")
 ```
 
+---
 ## Hazard Function
 
 The hazard function is defined as:
@@ -142,12 +152,14 @@ $$h(t)= \lim_{\Delta t \rightarrow 0} \frac{P(t \le T < t + \Delta t | T \ge t)}
 - $h(t)\Delta t \approx P(t \le T < t + \Delta t | T \ge t)$ - the probability of death in $(t, t + \Delta t)$ given survival up to time $t$.
 - For example, if time is measured in days then $h(t)$ is the approximate probability that an individual who is alive on day $t$, dies in the following day.
 
+---
 ## Non-parametric Estimation of the Survival Function
 
 $$\hat S(t) = \frac{\text{Number of individuals with survival times} \ge t}{\text{Number of individuals in data set }}.$$
 
 - The Kaplan-Meier estimate is an example of a procedure for estimating $\hat S(t)$.  
 
+---
 ## Kaplan-Meier
 
 
@@ -156,6 +168,7 @@ km <- survfit(Surv(time, status) ~ 1, data = leukemia)
 summary(km)
 ```
 
+---
 ## Kaplan-Meir
 
 ```{r}
@@ -163,6 +176,7 @@ library(survminer)
 ggsurvplot(km)
 ```
 
+---
 
 ## Proportional Hazards Model
 
@@ -178,12 +192,15 @@ $$h_i(t)=\exp(\beta x_i) h_0(t),$$
 
 This is the proportional hazards model for comparing two groups, with $\psi = \exp(\beta x_i).$
 
+---
 ##  General Proportional Hazards Model
 
 - Suppose that we would like to model the hazard of death at particular time as a linear function of $p$ explanatory variables: $x_1,\ldots, x_p$.
 - In this case,
 
 $$\psi_i = \beta_1 x_{1i} + \cdots + \beta_p x_{pi}.$$
+
+---
 So,
 
 $$h_i(t)=\exp(\beta_1 x_{1i} + \cdots + \beta_p x_{pi}) h_0(t),$$
@@ -193,10 +210,14 @@ $$\log\left\{\frac{h_i(t)}{h_0(t)}\right\} = \exp(\beta_1 x_{1i} + \cdots + \bet
 
 - A linear model for the logarithm of the hazard ratio.
 
+---
+
 ## Fitting the proportional Hazards model
 
 - Cox(1972) derived the appropriate likelihood for this model.
 - MLE of the $\beta$ parameters can be found by maximizing the log-likelihood function using numerical methods such as Newton-Raphson.
+
+---
 
 ## Fitting the proportional Hazards model
 
@@ -205,18 +226,25 @@ cox.mod <- coxph(Surv(time, status) ~ x, data = leukemia)
 summary(cox.mod)
 ```
 
+---
+
 - The estimated hazard ratio of patients not given maintenance chemotherapy vs. patients given maintenance chemotherapy is 2.4981. 
 
 $$\hat h_{\text{non-maintenance}}(t) = \exp(0.9155) \hat h_{\text{maintenance}}(t) $$
+
+---
 
 ## Cox Model Diagnostics
 
 - Graphical approaches such as log-log plots.
 - Goodness of fit tests such as Schoenfield residual plot
 
+---
 ## Book Reference
 ![](appliedsurvpict.png)
 [UofT lib link to Applied Survival Analysis using R](http://go.utlib.ca/cat/10487946)
+
+---
 
 # Unsupervised Learning
 
@@ -224,6 +252,7 @@ $$\hat h_{\text{non-maintenance}}(t) = \exp(0.9155) \hat h_{\text{maintenance}}(
 - Hierarchical Clustering
 - Priciple Component Analysis
 
+---
 
 ## Lukemia Survival Times
 
@@ -244,6 +273,9 @@ leukemia %>% head( n = 3)
 
 `x`:	maintenance chemotherapy
 
+
+---
+
 ## Lukemia Survival Times
 
 ```{r, echo=FALSE}
@@ -254,6 +286,9 @@ leukemia %>% head( n = 3)
 - Person was followed for 13 months and after that was lost to follow up. 
 - So we only know that the patient survived AT LEAST 13 months, but we have no other information available about the patient's status.  
 - This type of censoring (also known as "right censoring") makes linear regression an inappropriate way to analyze the data due to censoring bias.
+
+
+---
 
 ## Lukemia Survival Times
 
@@ -266,7 +301,7 @@ leukemia %>% ggplot(aes(time)) +
                  fill = "grey", bins = 10)
 ```
 
-
+---
 
 ## Survival Analysis in R
 
@@ -276,6 +311,7 @@ Surv(time, status)
 
 creates the dependent variable for a survival object in a survival model.
 
+---
 ## Survival Analysis in R
 
 ```{r}
@@ -291,6 +327,9 @@ tidy(km) %>% head(3) %>% rename(survival = estimate)
 ((23 - 2)/23)*((21 - 2)/21)*((19 - 1)/19)
 ```
 
+
+---
+
 ## Survival Analysis in R
 
 ```{r}
@@ -299,12 +338,18 @@ tidy(km) %>% head(6) %>% rename(survival = estimate)
 
 - At time 16 there are 17 - 1 - 1 = 15 people at risk since one person was censored at time 13.
 
+
+---
+
 ## Kaplan - Meir Analysis
 
 ```{r}
 library(survminer)
 ggsurvplot(km, data = leukemia, risk.table = T)
 ```
+
+
+---
 
 ## Comparing Survival Curves 
 
@@ -314,7 +359,7 @@ ggsurvplot(kmx, data = leukemia, risk.table = T)
 ```
 
 
-## Comparing Survival Curves 
+---
 
 ###  Log-Rank Test
 
@@ -322,7 +367,7 @@ $H_0$: There is no difference in the survival function between those who were on
 
 $H_a$: There is a difference in the survival function between those who were on maintenance chemotherapy and those who weren't on maintenance chemotherapy.
 
-## Comparing Survival Curves 
+---
 
 ###  Log-Rank Test
 
