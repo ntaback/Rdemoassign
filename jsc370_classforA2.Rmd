@@ -25,7 +25,7 @@ library(survival)
 - Time is often called survival time since it's the time that an individual has survived over some follow-up period.
 
 
-## # Survival Data
+## Survival Data
 
 The data below is from Pancreas cancer patients in TCGA.
 
