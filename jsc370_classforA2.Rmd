@@ -25,6 +25,18 @@ library(survival)
 - Time is often called survival time since it's the time that an individual has survived over some follow-up period.
 
 
+## # Survival Data
+
+The data below is from Pancreas cancer patients in TCGA.
+
+```{r, echo=FALSE}
+library(kableExtra)
+clinical <- read_delim("clinical.cart.2020-01-26/clinical.tsv", 
+                       "\t", escape_double = FALSE, trim_ws = TRUE) %>% distinct(case_id, .keep_all = T)
+clinical %>% select(days_to_last_follow_up, days_to_death, vital_status) %>% head() %>% kable() %>% kable_styling()
+```
+
+
 ## Censored Data
 
 - Censoring occurs when we have some information about individual survival time, but it's not exactly known.
